@@ -89,3 +89,4 @@ python schema_data.py
 Each team member must author their own module.  Instructors may conduct brief oral
 reviews of any submitted code.  See the assignment document for the full policy.
 
+# AUTHOR2 UPDATE FIX
