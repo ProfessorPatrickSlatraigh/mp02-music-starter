@@ -124,13 +124,7 @@ def get_tracks_on_no_playlist(conn):
     #
     # Your query here:
     query = """
-        SELECT t.track_id,
-           t.title,
-           a.name AS artist_name
-    FROM Track t
-    JOIN Artist a ON t.artist_id = a.artist_id
-    LEFT JOIN PlaylistTrack pt ON t.track_id = pt.track_id
-    WHERE pt.track_id IS NULL
+        
 
 
     """
@@ -175,15 +169,7 @@ def get_most_added_track(conn):
     #
     # Your query here:
     query = """
-        SELECT t.title,
-           a.name AS artist_name,
-           COUNT(*) AS playlist_count
-    FROM PlaylistTrack pt
-    JOIN Track t ON pt.track_id = t.track_id
-    JOIN Artist a ON t.artist_id = a.artist_id
-    GROUP BY pt.track_id
-    ORDER BY playlist_count DESC
-    LIMIT 1
+        
 
     """
     return conn.execute(query).fetchone()
