@@ -175,7 +175,7 @@ def get_most_added_track(conn):
     #
     # Your query here:
     query = """
-        SELECT t.title,
+        SSELECT t.title,
            a.name AS artist_name,
            COUNT(*) AS playlist_count
     FROM PlaylistTrack pt
