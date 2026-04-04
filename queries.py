@@ -82,6 +82,7 @@ def get_playlist_tracks(conn, playlist_name):
     JOIN Playlist p ON pt.playlist_id = p.playlist_id
     WHERE p.playlist_name = ?
     ORDER BY pt.position ASC
+
     
 
     """
@@ -131,6 +132,7 @@ def get_tracks_on_no_playlist(conn):
     JOIN Artist a ON t.artist_id = a.artist_id
     LEFT JOIN PlaylistTrack pt ON t.track_id = pt.track_id
     WHERE pt.track_id IS NULL
+
     
 
     """
@@ -175,7 +177,7 @@ def get_most_added_track(conn):
     #
     # Your query here:
     query = """
-SELECT t.title,
+         SELECT t.title,
            a.name AS artist_name,
            COUNT(*) AS playlist_count
     FROM PlaylistTrack pt
@@ -184,6 +186,7 @@ SELECT t.title,
     GROUP BY pt.track_id
     ORDER BY playlist_count DESC
     LIMIT 1
+
 
 
     """
@@ -239,6 +242,7 @@ def get_playlist_durations(conn):
     JOIN Track t ON pt.track_id = t.track_id
     GROUP BY p.playlist_id
     ORDER BY total_minutes DESC
+
     
 
     """
