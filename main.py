@@ -30,14 +30,11 @@ import os
 # Imports from Author modules
 # ─────────────────────────────────────────────────────────────────────────────
 
-# TODO: uncomment and complete these import lines once Author 1 and Author 2
-#       have merged their modules into main.
-
-# from schema_data import build_database, seed_database
-# from queries    import (get_playlist_tracks,
-#                         get_tracks_on_no_playlist,
-#                         get_most_added_track,
-#                         get_playlist_durations)
+from schema_data import build_database, seed_database
+from queries    import (get_playlist_tracks,
+                         get_tracks_on_no_playlist,
+                         get_most_added_track,
+                         get_playlist_durations)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -78,12 +75,8 @@ def divider(char="─", width=60):
 # ─────────────────────────────────────────────────────────────────────────────
 
 def show_playlist_tracks(conn):
-    """Menu option 1 — display all tracks on a user-specified playlist."""
     playlist_name = input("  Enter playlist name: ").strip()
-    # TODO: call get_playlist_tracks(conn, playlist_name)
-    #       Print each row with position, title, artist, and formatted duration.
-    #       If the list is empty, print a message saying no tracks were found.
-    rows = []  # replace with: get_playlist_tracks(conn, playlist_name)
+    rows = get_playlist_tracks(conn, playlist_name)
     if not rows:
         print(f"  No tracks found for playlist '{playlist_name}'.")
         return
@@ -94,11 +87,7 @@ def show_playlist_tracks(conn):
 
 
 def show_tracks_on_no_playlist(conn):
-    """Menu option 2 — display tracks that belong to no playlist."""
-    # TODO: call get_tracks_on_no_playlist(conn)
-    #       Print each row with track_id, title, and artist name.
-    #       If the list is empty, print a message confirming all tracks are assigned.
-    rows = []  # replace with: get_tracks_on_no_playlist(conn)
+    rows = get_tracks_on_no_playlist(conn)
     if not rows:
         print("  All tracks are assigned to at least one playlist.")
         return
@@ -109,11 +98,7 @@ def show_tracks_on_no_playlist(conn):
 
 
 def show_most_added_track(conn):
-    """Menu option 3 — display the track appearing on the most playlists."""
-    # TODO: call get_most_added_track(conn)
-    #       Print the title, artist name, and playlist count.
-    #       If the result is None, print a message that PlaylistTrack is empty.
-    row = None  # replace with: get_most_added_track(conn)
+    row = get_most_added_track(conn)
     if row is None:
         print("  No playlist assignments found.")
         return
@@ -123,11 +108,7 @@ def show_most_added_track(conn):
 
 
 def show_playlist_durations(conn):
-    """Menu option 4 — display total duration of each playlist, longest first."""
-    # TODO: call get_playlist_durations(conn)
-    #       Print each row with playlist name and total duration formatted as M:SS.
-    #       Duration values are returned in minutes (float); convert to seconds first.
-    rows = []  # replace with: get_playlist_durations(conn)
+    rows = get_playlist_durations(conn)
     if not rows:
         print("  No playlist data found.")
         return
@@ -148,10 +129,6 @@ def delete_artist(conn):
 
     Catches IntegrityError and rolls back if any step fails.
     """
-    # TODO: prompt the user for an artist_id (integer input).
-    #       Print the artist's name and ask for confirmation before deleting.
-    #       Implement the three-step deletion sequence in the correct FK order.
-    #       Commit after all three steps succeed, or rollback on IntegrityError.
 
     try:
         artist_id_input = input("  Enter artist ID to delete: ").strip()
@@ -160,7 +137,6 @@ def delete_artist(conn):
         print("  Invalid input — please enter an integer artist ID.")
         return
 
-    # Confirm the artist exists before attempting deletion
     row = conn.execute(
         "SELECT name FROM Artist WHERE artist_id = ?", (artist_id,)
     ).fetchone()
@@ -175,26 +151,19 @@ def delete_artist(conn):
         return
 
     try:
-        # Step 1 — remove PlaylistTrack rows for this artist's tracks
-        # TODO: write a DELETE statement that removes PlaylistTrack rows
-        #       where track_id IN (SELECT track_id FROM Track WHERE artist_id = ?)
+    
         conn.execute("""
-            -- TODO: DELETE FROM PlaylistTrack WHERE track_id IN (...)
-            SELECT 1 WHERE 1 = 0
+            DELETE FROM PlaylistTrack
+            WHERE track_id IN (SELECT track_id FROM Track WHERE artist_id = ?)
         """, (artist_id,))
 
-        # Step 2 — remove the artist's Track rows
-        # TODO: write a DELETE statement: DELETE FROM Track WHERE artist_id = ?
+
         conn.execute("""
-            -- TODO: DELETE FROM Track WHERE artist_id = ?
-            SELECT 1 WHERE 1 = 0
+            DELETE FROM Track WHERE artist_id = ?
         """, (artist_id,))
 
-        # Step 3 — remove the Artist row
-        # TODO: write a DELETE statement: DELETE FROM Artist WHERE artist_id = ?
         conn.execute("""
-            -- TODO: DELETE FROM Artist WHERE artist_id = ?
-            SELECT 1 WHERE 1 = 0
+            DELETE FROM Artist WHERE artist_id = ?
         """, (artist_id,))
 
         conn.commit()
@@ -223,28 +192,26 @@ def open_or_build_database():
     -------
     sqlite3.Connection  pointing to music.db
     """
-    # TODO: implement the two-branch startup logic described above.
-    #       Branch 1 (file exists):
-    #           conn = sqlite3.connect(DB_PATH)
-    #           conn.execute("PRAGMA foreign_keys = ON;")
-    #           print a message confirming re-open
-    #           return conn
-    #
-    #       Branch 2 (file does not exist):
-    #           mem_conn = sqlite3.connect(":memory:")
-    #           mem_conn.execute("PRAGMA foreign_keys = ON;")
-    #           build_database(mem_conn)
-    #           seed_database(mem_conn)
-    #           target_conn = sqlite3.connect(DB_PATH)
-    #           mem_conn.backup(target_conn)
-    #           target_conn.close()
-    #           mem_conn.close()
-    #           conn = sqlite3.connect(DB_PATH)
-    #           conn.execute("PRAGMA foreign_keys = ON;")
-    #           print a message confirming first-run build
-    #           return conn
-
-    # Placeholder — replace with your implementation
+def open_or_build_database():
+    if os.path.exists(DB_PATH):
+        conn = sqlite3.connect(DB_PATH)
+        conn.execute("PRAGMA foreign_keys = ON;")
+        print(f"  Re-opening existing database '{DB_PATH}'.")
+        return conn
+    else:
+        mem_conn = sqlite3.connect(":memory:")
+        mem_conn.execute("PRAGMA foreign_keys = ON;")
+        build_database(mem_conn)
+        seed_database(mem_conn)
+        disk_conn = sqlite3.connect(DB_PATH)
+        mem_conn.backup(disk_conn)
+        disk_conn.close()
+        mem_conn.close()
+        conn = sqlite3.connect(DB_PATH)
+        conn.execute("PRAGMA foreign_keys = ON;")
+        print(f"  First-run: built and seeded '{DB_PATH}'.")
+        return conn
+        
     print("  [open_or_build_database: TODO — implement startup logic]")
     conn = sqlite3.connect(":memory:")
     conn.execute("PRAGMA foreign_keys = ON;")
