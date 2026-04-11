@@ -56,7 +56,7 @@ def seed_database(conn):
 	(3, "Drake", "Rap", "Toronto"),
 	(4, "Ariana Grande", "R&B", "Boca Raton"),
 	(5, "Dua Lipa", "Disco", "London"),
-	(6, "Taylor Swift", "Pop", "Pennsylvania")
+	(6, "Taylor Swift", "Pop", "Reading")
 ]
 
     conn.executemany(
@@ -100,7 +100,7 @@ def seed_database(conn):
     playlists = [
         # (playlist_id, playlist_name, owner_name),
         (1, "Day Drive", "Shamiur"),
-	(2, "Chill", "Nalhanzo"),
+	(2, "Chill", "Nawang"),
 	(3, "Study", "Mahi"),
 	(4, "Gym","Shamiur"), 
     ]
