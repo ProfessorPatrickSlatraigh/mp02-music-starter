@@ -32,7 +32,6 @@ import sqlite3
 # FUNCTION 1 — Playlist track listing
 # ─────────────────────────────────────────────────────────────────────────────
 
-def get_playlist_tracks(conn, playlist_name):
     """Return all tracks on the named playlist, ordered by position.
 
     JOIN pattern required:
@@ -56,6 +55,7 @@ def get_playlist_tracks(conn, playlist_name):
     list of tuples  [(title, artist_name, duration_seconds, position), ...]
     Empty list if the playlist name does not exist.
     """
+def get_playlist_tracks(conn, playlist_name):
     query = """
         SELECT
             T.title,
