@@ -1,6 +1,6 @@
 """
 queries.py
-==========
+
 CIS 3120 · MP02 — SQL and Database
 Author 2 module — all query functions
 
@@ -56,21 +56,28 @@ def get_playlist_tracks(conn, playlist_name):
     Empty list if the playlist name does not exist.
     """
 
+
+=======
+    # TODO: write a SELECT query that joins PlaylistTrack, Track, Artist, and Playlist.
+    #       Filter by Playlist.playlist_name = ? using a parameterised query.
+    #       Order results by PlaylistTrack.position ASC.
+    #
+    # Hint: start from PlaylistTrack and join outward:
+    #   FROM PlaylistTrack pt
+    #   JOIN Track    t  ON pt.track_id    = t.track_id
+    #   JOIN Artist   a  ON t.artist_id    = a.artist_id
+    #   JOIN Playlist p  ON pt.playlist_id = p.playlist_id
+    #   WHERE p.playlist_name = ?
+    #
+    # Your query here:
+    # TODO: replace the stub query below with your actual SELECT statement.
+    #       The stub returns an empty result set so the function is callable
+    #       before implementation.  The ? placeholder must match playlist_name.
+(Revert "Merge pull request #3 from nawanglhantso/module/author2-queries")
     query = """
-        SELECT
-            T.title,
-            A.name,
-            T.duration_seconds,
-            PT.position
-        FROM PlaylistTrack PT
-        JOIN Track T
-            ON PT.track_id = T.track_id
-        JOIN Artist A
-            ON T.artist_id = A.artist_id
-        JOIN Playlist P
-            ON PT.playlist_id = P.playlist_id
-        WHERE P.playlist_name = ?
-        ORDER BY PT.position ASC
+        SELECT 'TODO' AS title, 'TODO' AS artist_name,
+               0 AS duration_seconds, 0 AS position
+        WHERE ? IS NULL
     """
     return conn.execute(query, (playlist_name,)).fetchall()
 
@@ -99,17 +106,21 @@ def get_tracks_on_no_playlist(conn):
     list of tuples  [(track_id, title, artist_name), ...]
     Empty list if every track belongs to at least one playlist.
     """
+    # TODO: write a SELECT query using LEFT JOIN between Track and PlaylistTrack.
+    #       After the LEFT JOIN, filter rows where PlaylistTrack.track_id IS NULL.
+    #       Also join Artist to retrieve the artist name.
+    #
+    # Hint:
+    #   FROM   Track t
+    #   JOIN   Artist a          ON t.artist_id = a.artist_id
+    #   LEFT JOIN PlaylistTrack pt ON t.track_id = pt.track_id
+    #   WHERE  pt.track_id IS NULL
+    #
+    # Your query here:
     query = """
-        SELECT
-            T.track_id,
-            T.title,
-            A.name
-        FROM Track T
-        JOIN Artist A
-            ON T.artist_id = A.artist_id
-        LEFT JOIN PlaylistTrack PT
-            ON T.track_id = PT.track_id
-        WHERE PT.track_id IS NULL
+        -- TODO: replace this comment with your SELECT statement
+        SELECT 0 AS track_id, 'TODO' AS title, 'TODO' AS artist_name
+        WHERE 1 = 0
     """
     return conn.execute(query).fetchall()
 
@@ -137,21 +148,26 @@ def get_most_added_track(conn):
     One tuple  (title, artist_name, playlist_count)
     None if PlaylistTrack is empty.
     """
+    # TODO: write a SELECT query that groups PlaylistTrack by track_id,
+    #       counts the rows per group, joins Track and Artist for the names,
+    #       orders by COUNT(*) DESC, and limits to 1 row.
+    #
+    # Hint:
+    #   SELECT t.title, a.name, COUNT(*) AS playlist_count
+    #   FROM   PlaylistTrack pt
+    #   JOIN   Track  t ON pt.track_id  = t.track_id
+    #   JOIN   Artist a ON t.artist_id  = a.artist_id
+    #   GROUP BY pt.track_id
+    #   ORDER BY playlist_count DESC
+    #   LIMIT 1
+    #
+    # Your query here:
     query = """
-        SELECT
-            T.title,
-            A.name,
-            COUNT(*) AS playlist_count
-        FROM PlaylistTrack PT
-        JOIN Track T
-            ON PT.track_id = T.track_id
-        JOIN Artist A
-            ON T.artist_id = A.artist_id
-        GROUP BY PT.track_id, T.title, A.name
-        ORDER BY playlist_count DESC
-        LIMIT 1
+        -- TODO: replace this comment with your SELECT statement
+        SELECT 'TODO' AS title, 'TODO' AS artist_name, 0 AS playlist_count
+        WHERE 1 = 0
     """
-    return conn.execute(query).fetchall()
+    return conn.execute(query).fetchone()
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -179,17 +195,26 @@ def get_playlist_durations(conn):
     list of tuples  [(playlist_name, total_minutes), ...]
     Empty list if PlaylistTrack is empty.
     """
+    # TODO: write a SELECT query that:
+    #   - joins Playlist, PlaylistTrack, and Track
+    #   - groups by Playlist.playlist_id (or playlist_name)
+    #   - selects Playlist.playlist_name and SUM(Track.duration_seconds) / 60.0
+    #   - orders by the SUM DESC
+    #
+    # Hint:
+    #   SELECT  p.playlist_name,
+    #           SUM(t.duration_seconds) / 60.0 AS total_minutes
+    #   FROM    Playlist      p
+    #   JOIN    PlaylistTrack pt ON p.playlist_id = pt.playlist_id
+    #   JOIN    Track         t  ON pt.track_id   = t.track_id
+    #   GROUP BY p.playlist_id
+    #   ORDER BY total_minutes DESC
+    #
+    # Your query here:
     query = """
-        SELECT
-            P.playlist_name,
-            SUM(T.duration_seconds) / 60.0 AS total_minutes
-        FROM Playlist P
-        JOIN PlaylistTrack PT
-            ON P.playlist_id = PT.playlist_id
-        JOIN Track T
-            ON PT.track_id = T.track_id
-        GROUP BY P.playlist_id, P.playlist_name
-        ORDER BY total_minutes DESC
+        -- TODO: replace this comment with your SELECT statement
+        SELECT 'TODO' AS playlist_name, 0.0 AS total_minutes
+        WHERE 1 = 0
     """
     return conn.execute(query).fetchall()
 
@@ -272,9 +297,8 @@ if __name__ == "__main__":
 
     print()
     print("Function 3 — get_most_added_track()")
-    rows = get_most_added_track(conn)
-    if rows:
-        row = rows[0]
+    row = get_most_added_track(conn)
+    if row:
         print(f"  {row[0]} by {row[1]} — appears on {row[2]} playlist(s)")
     else:
         print("  (no row returned — check your query)")
