@@ -80,13 +80,19 @@ def divider(char="─", width=60):
 def show_playlist_tracks(conn):
     """Menu option 1 — display all tracks on a user-specified playlist."""
     playlist_name = input("  Enter playlist name: ").strip()
+
     # TODO: call get_playlist_tracks(conn, playlist_name)
     #       Print each row with position, title, artist, and formatted duration.
     #       If the list is empty, print a message saying no tracks were found.
     rows = get_playlist_tracks(conn, playlist_name)
+
+    rows = get_playlist_tracks(conn, playlist_name)
+
+>>>>>>> f90b6d7 (Save current work before reverting Author 2)
     if not rows:
         print(f"  No tracks found for playlist '{playlist_name}'.")
         return
+
     print(f"\n  {'Pos':>3}  {'Title':<30}  {'Artist':<22}  {'Duration'}")
     divider()
     for title, artist, duration_sec, position in rows:
@@ -249,6 +255,7 @@ def open_or_build_database():
     #           print a message confirming first-run build
     #           return conn
 
+<<<<<<< HEAD
     mem_conn = sqlite3.connect(":memory:")
     mem_conn.execute("PRAGMA foreign_keys = ON;")
     build_database(mem_conn)
@@ -262,6 +269,10 @@ def open_or_build_database():
    
     
     conn = sqlite3.connect(DB_PATH)
+=======
+    # Placeholder — replace with your implementation
+    conn = sqlite3.connect(":memory:")
+>>>>>>> f90b6d7 (Save current work before reverting Author 2)
     conn.execute("PRAGMA foreign_keys = ON;")
     print("Built and saved new music.db")
     return conn
