@@ -122,9 +122,14 @@ def get_tracks_on_no_playlist(conn):
     #
     # Your query here:
     query = """
-        -- TODO: replace this comment with your SELECT statement
-        SELECT 0 AS track_id, 'TODO' AS title, 'TODO' AS artist_name
-        WHERE 1 = 0
+        SELECT t.track_id,
+               t.title,
+               a.name
+        FROM Track t
+        JOIN Artist a ON t.artist_id = a.artist_id
+        LEFT JOIN PlaylistTrack pt ON t.track_id = pt.track_id
+        WHERE pt.track_id IS NULL;
+
     """
     return conn.execute(query).fetchall()
 
