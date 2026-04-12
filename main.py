@@ -259,7 +259,7 @@ def open_or_build_database():
     target_conn.close()
     mem_conn.close()
 
-    # Placeholder — replace with your implementation
+   
     
     conn = sqlite3.connect(DB_PATH)
     conn.execute("PRAGMA foreign_keys = ON;")
