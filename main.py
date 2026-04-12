@@ -114,10 +114,10 @@ def show_most_added_track(conn):
     #       Print the title, artist name, and playlist count.
     #       If the result is None, print a message that PlaylistTrack is empty.
     row = get_most_added_track(conn)
-    if row is None:
+    if not row:
         print("  No playlist assignments found.")
         return
-    title, artist, count = row
+    title, artist, count = row[0]
     print(f"\n  Most-added track: {title} by {artist}")
     print(f"  Appears on {count} playlist(s).")
 
