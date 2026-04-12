@@ -21,8 +21,9 @@ IMPORTANT:
     - Do not define schema or query logic here; import from the Author modules.
     - Do not call build_database() or seed_database() on re-open runs.
     - The menu loop must continue until the user enters 0.
-    
+
 """
+
 
 import sqlite3
 import os
