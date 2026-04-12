@@ -37,7 +37,7 @@ from schema_data import build_database, seed_database
 from queries    import (get_playlist_tracks,
                          get_tracks_on_no_playlist,
                          get_most_added_track,
-                         get_playlist_durations)
+                         get_playlist_durations,)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
