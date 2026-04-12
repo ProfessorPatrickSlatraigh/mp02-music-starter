@@ -25,7 +25,6 @@ import os
 
 # ─────────────────────────────────────────────────────────────────────────────
 # PART 1 — Schema creation
-# ─────────────────────────────────────────────────────────────────────────────
 
 def build_database(conn):
     """Create the four-table music schema in the database referenced by conn.
