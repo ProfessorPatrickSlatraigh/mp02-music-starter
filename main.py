@@ -210,21 +210,31 @@ def delete_artist(conn):
 def open_or_build_database():
     """Return an open sqlite3 connection to the music database.
 
+
     If music.db exists on disk, open it directly and print a re-open message.
     If music.db does not exist, build and seed an in-memory database, back it
     up to music.db, then open music.db for all subsequent operations.
 
     Returns
+    
     -------
     sqlite3.Connection  pointing to music.db
     """
+   
     # TODO: implement the two-branch startup logic described above.
     #       Branch 1 (file exists):
     #           conn = sqlite3.connect(DB_PATH)
     #           conn.execute("PRAGMA foreign_keys = ON;")
     #           print a message confirming re-open
     #           return conn
-    #
+    
+    if os.path.exists(DB_PATH):
+        conn = sqlite3.connect(DB_PATH)
+        conn.execute("PRAGMA foreign_keys = ON;")
+        print("Opened existing music.db")
+        return conn
+         
+    
     #       Branch 2 (file does not exist):
     #           mem_conn = sqlite3.connect(":memory:")
     #           mem_conn.execute("PRAGMA foreign_keys = ON;")
@@ -239,11 +249,24 @@ def open_or_build_database():
     #           print a message confirming first-run build
     #           return conn
 
+    mem_conn = sqlite3.connect(":memory:")
+    mem_conn.execute("PRAGMA foreign_keys = ON;")
+    build_database(mem_conn)
+    seed_database(mem_conn)
+
+    target_conn = sqlite3.connect(DB_PATH)
+    mem_conn.backup(target_conn)
+    target_conn.close()
+    mem_conn.close()
+
     # Placeholder — replace with your implementation
-    print("  [open_or_build_database: TODO — implement startup logic]")
-    conn = sqlite3.connect(":memory:")
+    
+    conn = sqlite3.connect(DB_PATH)
     conn.execute("PRAGMA foreign_keys = ON;")
+    print("Built and saved new music.db")
     return conn
+
+    
 
 
 # ─────────────────────────────────────────────────────────────────────────────
