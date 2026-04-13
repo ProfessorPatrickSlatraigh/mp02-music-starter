@@ -130,9 +130,12 @@ def seed_database(conn):
     # TODO: replace placeholder data with your team's chosen artists
 
     artists = [
-        # (artist_id, name, genre, origin_city),
-        (1, "TODO — Artist Name", "TODO — Genre", "TODO — City"),
-        # add at least 5 more rows ...
+        (1, "Bad Bunny", "Reggaeton", "San Juan"),
+        (2, "Rihanna", "Pop", "Barbados"),
+        (3, "The Weeknd", "R&B", "Toronto"),
+        (4, "Doja Cat", "Pop/Rap", "Los Angeles"),
+        (5, "Travis Scott", "Hip-Hop", "Houston"),
+        (6, "Mariah Carey", "Pop/R&B", "Huntington")
     ]
 
     conn.executemany(
@@ -147,10 +150,30 @@ def seed_database(conn):
     # TODO: replace placeholder data with your team's chosen tracks (minimum 18)
 
     tracks = [
-        # (track_id, title, duration_seconds, artist_id),
-        (1, "TODO — Track Title", 200, 1),
-        # add at least 17 more rows ...
-    ]
+    (1, "Tití Me Preguntó", 240, 1),
+    (2, "Dakiti", 210, 1),
+    (3, "Moscow Mule", 225, 1),
+
+    (4, "Umbrella", 263, 2),
+    (5, "Diamonds", 245, 2),
+    (6, "We Found Love", 215, 2),
+
+    (7, "Blinding Lights", 200, 3),
+    (8, "Starboy", 230, 3),
+    (9, "Save Your Tears", 215, 3),
+
+    (10, "Say So", 238, 4),
+    (11, "Woman", 172, 4),
+    (12, "Paint The Town Red", 230, 4),
+
+    (13, "SICKO MODE", 312, 5),
+    (14, "Goosebumps", 243, 5),
+    (15, "Highest in the Room", 175, 5),
+
+    (16, "We Belong Together", 214, 6),
+    (17, "Obsessed", 242, 6),
+    (18, "Fantasy", 230, 6)
+]
 
     conn.executemany(
         "INSERT OR IGNORE INTO Track VALUES (?, ?, ?, ?)",
@@ -162,9 +185,10 @@ def seed_database(conn):
     # TODO: replace placeholder data with your team's chosen playlists (minimum 4)
 
     playlists = [
-        # (playlist_id, playlist_name, owner_name),
-        (1, "TODO — Playlist Name", "TODO — Owner"),
-        # add at least 3 more rows ...
+        (1, "Gym Grind", "David"),
+        (2, "R&B Relax", "Emily"),
+        (3, "Summer Vibes", "Benjamin"),
+        (4, "Late Night", "Sarah")
     ]
 
     conn.executemany(
@@ -181,10 +205,11 @@ def seed_database(conn):
     # TODO: replace placeholder data with your team's chosen assignments (minimum 20)
 
     playlist_tracks = [
-        # (playlist_id, track_id, position),
-        (1, 1, 1),
-        # add at least 19 more rows ...
-    ]
+    (1, 1, 1), (1, 4, 2), (1, 7, 3), (1, 13, 4), (1, 10, 5),
+    (2, 3, 1), (2, 8, 2), (2, 16, 3), (2, 11, 4), (2, 14, 5),
+    (3, 2, 1), (3, 5, 2), (3, 9, 3), (3, 12, 4), (3, 17, 5),
+    (4, 6, 1), (4, 18, 2), (4, 15, 3), (4, 7, 4), (4, 1, 5)
+]
 
     conn.executemany(
         "INSERT OR IGNORE INTO PlaylistTrack VALUES (?, ?, ?)",
