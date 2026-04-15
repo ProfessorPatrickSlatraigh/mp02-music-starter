@@ -23,116 +23,56 @@ import sqlite3
 import os
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# PART 1 — Schema creation
-# ─────────────────────────────────────────────────────────────────────────────
-
 def build_database(conn):
-    """Create the four-table music schema in the database referenced by conn.
-
-    Requirements (all graded):
-      - Call conn.execute("PRAGMA foreign_keys = ON;") as the FIRST statement.
-      - Use CREATE TABLE IF NOT EXISTS for every table.
-      - Create tables in dependency order so foreign key references resolve:
-            Artist  →  Track  →  Playlist  →  PlaylistTrack
-      - PlaylistTrack must declare a composite PRIMARY KEY (playlist_id, track_id).
-      - Call conn.commit() at the end.
-
-    Parameters
-    ----------
-    conn : sqlite3.Connection
-        An open SQLite connection.  May be :memory: or a file-backed database.
-
-    Returns
-    -------
-    None
-    """
-    # Step 1 — enable foreign key enforcement  (DO NOT REMOVE THIS LINE)
     conn.execute("PRAGMA foreign_keys = ON;")
 
-    # Step 2 — Artist table
     conn.execute("""
-        CREATE TABLE IF NOT EXISTS Artist (
-            artist_id    INTEGER PRIMARY KEY,
-            name         TEXT    NOT NULL,
-            genre        TEXT    NOT NULL,
-            origin_city  TEXT
-        )
+    CREATE TABLE IF NOT EXISTS Artist (
+        artist_id INTEGER PRIMARY KEY,
+        name TEXT NOT NULL,
+        genre TEXT NOT NULL,
+        origin_city TEXT
+    )
     """)
 
-    # Step 3 — Track table  (references Artist)
     conn.execute("""
-        CREATE TABLE IF NOT EXISTS Track (
-            track_id         INTEGER PRIMARY KEY,
-            title            TEXT    NOT NULL,
-            duration_seconds INTEGER NOT NULL,
-            artist_id        INTEGER NOT NULL
-                REFERENCES Artist(artist_id)
-        )
+    CREATE TABLE IF NOT EXISTS Track (
+        track_id INTEGER PRIMARY KEY,
+        title TEXT NOT NULL,
+        duration_seconds INTEGER NOT NULL,
+        artist_id INTEGER NOT NULL
+        REFERENCES Artist(artist_id)
+    )
     """)
 
-    # Step 4 — Playlist table
     conn.execute("""
-        CREATE TABLE IF NOT EXISTS Playlist (
-            playlist_id    INTEGER PRIMARY KEY,
-            playlist_name  TEXT    NOT NULL,
-            owner_name     TEXT    NOT NULL
-        )
+    CREATE TABLE IF NOT EXISTS Playlist (
+        playlist_id INTEGER PRIMARY KEY,
+        playlist_name TEXT NOT NULL,
+        owner_name TEXT NOT NULL
+    )
     """)
 
-    # Step 5 — PlaylistTrack junction table  (references both Playlist and Track)
     conn.execute("""
-        CREATE TABLE IF NOT EXISTS PlaylistTrack (
-            playlist_id  INTEGER NOT NULL REFERENCES Playlist(playlist_id),
-            track_id     INTEGER NOT NULL REFERENCES Track(track_id),
-            position     INTEGER NOT NULL,
-            PRIMARY KEY (playlist_id, track_id)
-        )
+    CREATE TABLE IF NOT EXISTS PlaylistTrack (
+        playlist_id INTEGER NOT NULL REFERENCES Playlist(playlist_id),
+        track_id INTEGER NOT NULL REFERENCES Track(track_id),
+        position INTEGER NOT NULL,
+        PRIMARY KEY (playlist_id, track_id)
+    )
     """)
 
     conn.commit()
-    print("build_database: schema created successfully.")
 
-
-# ─────────────────────────────────────────────────────────────────────────────
-# PART 2 — Seed data
-# ─────────────────────────────────────────────────────────────────────────────
 
 def seed_database(conn):
-    """Populate all four tables with realistic music data.
-
-    Requirements (all graded):
-      - Use conn.executemany() for every table — no individual execute() inserts.
-      - Use INSERT OR IGNORE so this function can be called more than once
-        without raising IntegrityError on duplicate primary keys.
-      - Insert at minimum:
-            6  artists
-            18 tracks     (each referencing a valid artist_id)
-            4  playlists
-            20 PlaylistTrack assignments
-      - At least one artist must have three or more tracks assigned to playlists.
-      - Call conn.commit() after all inserts.
-
-    Parameters
-    ----------
-    conn : sqlite3.Connection
-        An open, schema-ready SQLite connection.
-
-    Returns
-    -------
-    None
-    """
-
-    # ── Artists ──────────────────────────────────────────────────────────────
-    # Columns: artist_id, name, genre, origin_city
-    # Replace the placeholder rows below with at least 6 real artists.
-    # Choose a genre theme your team agrees on (hip-hop, jazz, Latin, K-pop, etc.)
-    # TODO: replace placeholder data with your team's chosen artists
-
     artists = [
-        # (artist_id, name, genre, origin_city),
-        (1, "TODO — Artist Name", "TODO — Genre", "TODO — City"),
-        # add at least 5 more rows ...
+        (1, "Drake",            "Hip-Hop", "Toronto"),
+        (2, "Bad Bunny",        "Hip-Hop", "San Juan"),
+        (3, "Kendrick Lamar",   "Hip-Hop", "Compton"),
+        (4, "J. Cole",          "Hip-Hop", "Fayetteville"),
+        (5, "Don Toliver",      "Hip-Hop", "Houston"),
+        (6, "Eminem",           "Hip-Hop", "Detroit")
     ]
 
     conn.executemany(
@@ -140,16 +80,25 @@ def seed_database(conn):
         artists
     )
 
-    # ── Tracks ───────────────────────────────────────────────────────────────
-    # Columns: track_id, title, duration_seconds, artist_id
-    # Every artist_id here must exist in the artists list above.
-    # duration_seconds: a 3-minute song = 180 seconds.
-    # TODO: replace placeholder data with your team's chosen tracks (minimum 18)
-
     tracks = [
-        # (track_id, title, duration_seconds, artist_id),
-        (1, "TODO — Track Title", 200, 1),
-        # add at least 17 more rows ...
+        (1,  "God's Plan",              198, 1),
+        (2,  "Hotline Bling",           267, 1),
+        (3,  "In My Feelings",          217, 1),
+        (4,  "Tití Me Preguntó",        240, 2),
+        (5,  "Moscow Mule",             215, 2),
+        (6,  "Me Porto Bonito",         210, 2),
+        (7,  "HUMBLE.",                 177, 3),
+        (8,  "DNA.",                    185, 3),
+        (9,  "Alright",                 216, 3),
+        (10, "No Role Modelz",          210, 4),
+        (11, "Middle Child",            200, 4),
+        (12, "Power Trip",              240, 4),
+        (13, "After Party",             210, 5),
+        (14, "No Idea",                 205, 5),
+        (15, "Lemonade",                195, 5),
+        (16, "Lose Yourself",           326, 6),
+        (17, "The Real Slim Shady",     284, 6),
+        (18, "Mockingbird",             250, 6)
     ]
 
     conn.executemany(
@@ -157,14 +106,11 @@ def seed_database(conn):
         tracks
     )
 
-    # ── Playlists ────────────────────────────────────────────────────────────
-    # Columns: playlist_id, playlist_name, owner_name
-    # TODO: replace placeholder data with your team's chosen playlists (minimum 4)
-
     playlists = [
-        # (playlist_id, playlist_name, owner_name),
-        (1, "TODO — Playlist Name", "TODO — Owner"),
-        # add at least 3 more rows ...
+        (1, "Vibes", "Alex"),
+        (2, "Workout", "Samuel"),
+        (3, "Throwbacks", "Bryan"),
+        (4, "Late Night", "Jordan")
     ]
 
     conn.executemany(
@@ -172,18 +118,34 @@ def seed_database(conn):
         playlists
     )
 
-    # ── PlaylistTrack ─────────────────────────────────────────────────────────
-    # Columns: playlist_id, track_id, position
-    # Both playlist_id and track_id must reference rows inserted above.
-    # (playlist_id, track_id) pairs must be unique — the composite PK enforces this.
-    # position is the 1-based slot of the track within the playlist.
-    # At least one artist must have 3+ tracks appearing across these assignments.
-    # TODO: replace placeholder data with your team's chosen assignments (minimum 20)
-
     playlist_tracks = [
-        # (playlist_id, track_id, position),
-        (1, 1, 1),
-        # add at least 19 more rows ...
+        # Vibes
+        (1,  1,  1),
+        (1,  3,  2),
+        (1, 13,  3),
+        (1, 14,  4),
+        (1,  6,  5),
+
+        # Workout
+        (2,  2,  1),
+        (2,  4,  2),
+        (2,  8,  3),
+        (2, 11,  4),
+        (2, 17,  5),
+
+        # Throwbacks
+        (3, 16,  1),
+        (3, 17,  2),
+        (3, 10,  3),
+        (3, 12,  4),
+        (3,  7,  5),
+
+        # Late Night
+        (4,  5,  1),
+        (4,  9,  2),
+        (4, 15,  3),
+        (4, 18,  4),
+        (4, 14,  5)
     ]
 
     conn.executemany(
@@ -192,60 +154,20 @@ def seed_database(conn):
     )
 
     conn.commit()
-    print("seed_database: data inserted successfully.")
-
-
-# ─────────────────────────────────────────────────────────────────────────────
-# PART 3 — Standalone demonstration  (run:  python schema_data.py)
-# ─────────────────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-
-    # 3a — Build and seed a RAM-only database
-    conn = sqlite3.connect(":memory:")
-    conn.execute("PRAGMA foreign_keys = ON;")
+    conn = sqlite3.connect("music.db")   
     build_database(conn)
     seed_database(conn)
 
-    # ── Quick sanity check ────────────────────────────────────────────────────
-    row_counts = {
-        "Artist":       conn.execute("SELECT COUNT(*) FROM Artist").fetchone()[0],
-        "Track":        conn.execute("SELECT COUNT(*) FROM Track").fetchone()[0],
-        "Playlist":     conn.execute("SELECT COUNT(*) FROM Playlist").fetchone()[0],
-        "PlaylistTrack":conn.execute("SELECT COUNT(*) FROM PlaylistTrack").fetchone()[0],
-    }
-    print("\nRow counts after seeding:")
-    for table, count in row_counts.items():
-        print(f"  {table:<16} {count:>3} rows")
+    print("Artist count:", conn.execute("SELECT COUNT(*) FROM Artist").fetchone())
 
-    # ── 3b — IntegrityError demonstration ─────────────────────────────────────
-    # TODO: insert a Track row whose artist_id does NOT exist in the Artist table.
-    #       Use artist_id = 9999 (or any value you did not insert).
-    #       The PRAGMA foreign_keys = ON statement makes SQLite enforce this.
-    #       Catch the resulting sqlite3.IntegrityError and print a descriptive message.
-    #
-    # Your code here:
-    print("\nIntegrityError demonstration:")
     try:
-        # TODO: write the INSERT statement that should fail
-        conn.execute("INSERT INTO Track VALUES (999, 'Ghost Track', 210, 9999)")
-        print("  Insert succeeded — did you enable PRAGMA foreign_keys = ON?")
+        conn.execute("INSERT INTO Track VALUES (99, 'Fake Track', 200, 9999)")
     except sqlite3.IntegrityError as e:
-        # TODO: print a message that identifies which constraint was violated
-        print(f"  IntegrityError caught: {e}")
-        print("  This error confirms that foreign key enforcement is active.")
+        print("IntegrityError caught:", e)
 
-    # ── 3c — Persist the RAM database to disk with .backup() ─────────────────
-    # TODO: open a connection to "music.db" and call conn.backup(target_conn)
-    #       to write a permanent copy of the in-memory database to disk.
-    #       Print a confirmation message.  Close the target connection when done.
-    #
-    # Your code here:
-    print("\nPersisting database to music.db ...")
-    DB_PATH = "music.db"
-    target_conn = sqlite3.connect(DB_PATH)
-    conn.backup(target_conn)
-    target_conn.close()
+    conn.commit()   
     conn.close()
-    print(f"  Backup complete.  File size: {os.path.getsize(DB_PATH):,} bytes")
-    print(f"  Reopen with:  sqlite3.connect('{DB_PATH}')")
+
+    print("Database saved to music.db")
