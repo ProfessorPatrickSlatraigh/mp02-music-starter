@@ -56,25 +56,17 @@ def get_playlist_tracks(conn, playlist_name):
     list of tuples  [(title, artist_name, duration_seconds, position), ...]
     Empty list if the playlist name does not exist.
     """
-    # TODO: write a SELECT query that joins PlaylistTrack, Track, Artist, and Playlist.
-    #       Filter by Playlist.playlist_name = ? using a parameterised query.
-    #       Order results by PlaylistTrack.position ASC.
-    #
-    # Hint: start from PlaylistTrack and join outward:
-    #   FROM PlaylistTrack pt
-    #   JOIN Track    t  ON pt.track_id    = t.track_id
-    #   JOIN Artist   a  ON t.artist_id    = a.artist_id
-    #   JOIN Playlist p  ON pt.playlist_id = p.playlist_id
-    #   WHERE p.playlist_name = ?
-    #
-    # Your query here:
-    # TODO: replace the stub query below with your actual SELECT statement.
-    #       The stub returns an empty result set so the function is callable
-    #       before implementation.  The ? placeholder must match playlist_name.
     query = """
-        SELECT 'TODO' AS title, 'TODO' AS artist_name,
-               0 AS duration_seconds, 0 AS position
-        WHERE ? IS NULL
+        SELECT t.title,
+               a.name AS artist_name,
+               t.duration_seconds,
+               pt.position
+        FROM PlaylistTrack pt
+        JOIN Track t ON pt.track_id = t.track_id
+        JOIN Artist a ON t.artist_id = a.artist_id
+        JOIN Playlist p ON pt.playlist_id = p.playlist_id
+        WHERE p.playlist_name = ?
+        ORDER BY pt.position ASC
     """
     return conn.execute(query, (playlist_name,)).fetchall()
 
@@ -103,21 +95,14 @@ def get_tracks_on_no_playlist(conn):
     list of tuples  [(track_id, title, artist_name), ...]
     Empty list if every track belongs to at least one playlist.
     """
-    # TODO: write a SELECT query using LEFT JOIN between Track and PlaylistTrack.
-    #       After the LEFT JOIN, filter rows where PlaylistTrack.track_id IS NULL.
-    #       Also join Artist to retrieve the artist name.
-    #
-    # Hint:
-    #   FROM   Track t
-    #   JOIN   Artist a          ON t.artist_id = a.artist_id
-    #   LEFT JOIN PlaylistTrack pt ON t.track_id = pt.track_id
-    #   WHERE  pt.track_id IS NULL
-    #
-    # Your query here:
     query = """
-        -- TODO: replace this comment with your SELECT statement
-        SELECT 0 AS track_id, 'TODO' AS title, 'TODO' AS artist_name
-        WHERE 1 = 0
+        SELECT t.track_id,
+               t.title,
+               a.name AS artist_name
+        FROM Track t
+        JOIN Artist a ON t.artist_id = a.artist_id
+        LEFT JOIN PlaylistTrack pt ON t.track_id = pt.track_id
+        WHERE pt.track_id IS NULL
     """
     return conn.execute(query).fetchall()
 
@@ -145,26 +130,19 @@ def get_most_added_track(conn):
     One tuple  (title, artist_name, playlist_count)
     None if PlaylistTrack is empty.
     """
-    # TODO: write a SELECT query that groups PlaylistTrack by track_id,
-    #       counts the rows per group, joins Track and Artist for the names,
-    #       orders by COUNT(*) DESC, and limits to 1 row.
-    #
-    # Hint:
-    #   SELECT t.title, a.name, COUNT(*) AS playlist_count
-    #   FROM   PlaylistTrack pt
-    #   JOIN   Track  t ON pt.track_id  = t.track_id
-    #   JOIN   Artist a ON t.artist_id  = a.artist_id
-    #   GROUP BY pt.track_id
-    #   ORDER BY playlist_count DESC
-    #   LIMIT 1
-    #
-    # Your query here:
     query = """
-        -- TODO: replace this comment with your SELECT statement
-        SELECT 'TODO' AS title, 'TODO' AS artist_name, 0 AS playlist_count
-        WHERE 1 = 0
+        SELECT t.title,
+               a.name AS artist_name,
+               COUNT(*) AS playlist_count
+        FROM PlaylistTrack pt
+        JOIN Track t ON pt.track_id = t.track_id
+        JOIN Artist a ON t.artist_id = a.artist_id
+        GROUP BY pt.track_id
+        ORDER BY playlist_count DESC
+        LIMIT 1
     """
-    return conn.execute(query).fetchone()
+    result = conn.execute(query).fetchone()
+    return result
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -192,26 +170,14 @@ def get_playlist_durations(conn):
     list of tuples  [(playlist_name, total_minutes), ...]
     Empty list if PlaylistTrack is empty.
     """
-    # TODO: write a SELECT query that:
-    #   - joins Playlist, PlaylistTrack, and Track
-    #   - groups by Playlist.playlist_id (or playlist_name)
-    #   - selects Playlist.playlist_name and SUM(Track.duration_seconds) / 60.0
-    #   - orders by the SUM DESC
-    #
-    # Hint:
-    #   SELECT  p.playlist_name,
-    #           SUM(t.duration_seconds) / 60.0 AS total_minutes
-    #   FROM    Playlist      p
-    #   JOIN    PlaylistTrack pt ON p.playlist_id = pt.playlist_id
-    #   JOIN    Track         t  ON pt.track_id   = t.track_id
-    #   GROUP BY p.playlist_id
-    #   ORDER BY total_minutes DESC
-    #
-    # Your query here:
     query = """
-        -- TODO: replace this comment with your SELECT statement
-        SELECT 'TODO' AS playlist_name, 0.0 AS total_minutes
-        WHERE 1 = 0
+        SELECT p.playlist_name,
+               SUM(t.duration_seconds) / 60.0 AS total_minutes
+        FROM Playlist p
+        JOIN PlaylistTrack pt ON p.playlist_id = pt.playlist_id
+        JOIN Track t ON pt.track_id = t.track_id
+        GROUP BY p.playlist_id
+        ORDER BY total_minutes DESC
     """
     return conn.execute(query).fetchall()
 
@@ -253,33 +219,77 @@ if __name__ == "__main__":
 
     # Minimal seed — enough rows to exercise all four query functions
     conn.executemany("INSERT OR IGNORE INTO Artist VALUES (?,?,?,?)", [
-        (1, "Sample Artist A", "Hip-Hop", "New York"),
-        (2, "Sample Artist B", "R&B",     "Atlanta"),
+        (1, "Wale", "Hip-Hop", "Washington, D.C."),
+        (2, "Travis Scott", "Hip-Hop", "Houston"),
+        (3, "Don Toliver", "Hip-Hop", "Houston"),
+        (4, "Kenny Mason", "Hip-Hop", "Atlanta"),
+        (5, "J. Cole", "Hip-Hop", "Fayetteville"),
+        (6, "Freddie Gibbs & Alchemist", "Hip-Hop", "Gary / Beverly Hills"),
+        (7, "Westside Gunn", "Hip-Hop", "Buffalo"),
+        (8, "Clipse", "Hip-Hop", "Virginia Beach"),
+        (9, "Chance The Rapper", "Hip-Hop", "Chicago"),
     ])
+    
     conn.executemany("INSERT OR IGNORE INTO Track VALUES (?,?,?,?)", [
-        (1, "Track One",   210, 1),
-        (2, "Track Two",   185, 1),
-        (3, "Track Three", 240, 2),
-        (4, "Track Four",  195, 2),
-        (5, "Orphan Track", 170, 1),  # intentionally not added to any playlist
+        (1, "Power and Problems", 240, 1),
+        (2, "goosebumps", 244, 2),
+        (3, "STARGAZING", 271, 2),
+        (4, "CAN'T SAY Feat. Don Toliver", 198, 2),
+        (5, "No Idea", 154, 3),
+        (6, "Drugs N Hella Melodies Feat. Kali Uchis", 198, 3),
+        (7, "MAMA DON'T KNOW", 192, 4),
+        (8, "GIVENCHY BAG", 157, 4),
+        (9, "SHELL", 210, 4),
+        (10, "Huntin Wabbitz", 162, 5),
+        (11, "3001", 158, 5),
+        (12, "1995", 289, 6),
+        (13, "Mar-A-Lago", 149, 6),
+        (14, "God Is Perfect", 239, 6),
+        (15, "Why I Do Em Like That feat. Billie Esco", 241, 7),
+        (16, "MANDELA", 122, 7),
+        (17, "F.I.C.O. Feat. Stove God Cooks", 202, 8),
+        (18, "Ride Feat Do or Die", 179, 9),
     ])
+    
     conn.executemany("INSERT OR IGNORE INTO Playlist VALUES (?,?,?)", [
-        (1, "Morning Commute", "Student A"),
-        (2, "Study Session",   "Student B"),
+        (1, "Workout Mix", "Roy"),
+        (2, "Late Night Vibes", "Roy"),
+        (3, "Study Mode", "Roy"),
+        (4, "Weekend Drive", "Roy"),
     ])
+    
     conn.executemany("INSERT OR IGNORE INTO PlaylistTrack VALUES (?,?,?)", [
-        (1, 1, 1), (1, 2, 2), (1, 3, 3),
-        (2, 1, 1), (2, 4, 2),  # Track 1 appears on both playlists
+        (1, 2, 1),
+        (1, 3, 2),
+        (1, 7, 3),
+        (1, 10, 4),
+        (1, 12, 5),
+        (2, 1, 1),
+        (2, 5, 2),
+        (2, 6, 3),
+        (2, 14, 4),
+        (2, 15, 5),
+        (3, 8, 1),
+        (3, 9, 2),
+        (3, 11, 3),
+        (3, 13, 4),
+        (3, 18, 5),
+        (4, 4, 1),
+        (4, 12, 2),
+        (4, 14, 3),
+        (4, 16, 4),
+        (4, 17, 5),
     ])
+    
     conn.commit()
 
     # Run each function and print a brief result summary
     print("=" * 60)
-    print("Function 1 — get_playlist_tracks('Morning Commute')")
-    rows = get_playlist_tracks(conn, "Morning Commute")
+    print("Function 1 — get_playlist_tracks('Workout Mix')")
+    rows = get_playlist_tracks(conn, "Workout Mix")
     if rows:
         for row in rows:
-            print(f"  pos {row[3]:>2} | {row[0]:<20} | {row[1]:<20} | {row[2]}s")
+            print(f"  pos {row[3]:>2} | {row[0]:<35} | {row[1]:<25} | {row[2]}s")
     else:
         print("  (no rows returned — check your query)")
 
@@ -288,7 +298,7 @@ if __name__ == "__main__":
     rows = get_tracks_on_no_playlist(conn)
     if rows:
         for row in rows:
-            print(f"  id={row[0]}  {row[1]} by {row[2]}")
+            print(f"  id={row[0]} | {row[1]:<35} | {row[2]}")
     else:
         print("  (no rows returned — check your query)")
 
@@ -308,7 +318,7 @@ if __name__ == "__main__":
             total_sec = row[1] * 60
             mins = int(total_sec) // 60
             secs = int(total_sec) % 60
-            print(f"  {row[0]:<25} {mins}:{secs:02d}")
+            print(f"  {row[0]:<20} | {mins}:{secs:02d} ({row[1]:.2f} minutes)")
     else:
         print("  (no rows returned — check your query)")
 

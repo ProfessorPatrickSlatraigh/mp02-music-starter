@@ -130,10 +130,17 @@ def seed_database(conn):
     # TODO: replace placeholder data with your team's chosen artists
 
     artists = [
-        # (artist_id, name, genre, origin_city),
-        (1, "TODO — Artist Name", "TODO — Genre", "TODO — City"),
-        # add at least 5 more rows ...
+        (1, "Wale", "Hip-Hop", "Washington, D.C."),
+        (2, "Travis Scott", "Hip-Hop", "Houston"),
+        (3, "Don Toliver", "Hip-Hop", "Houston"),
+        (4, "Kenny Mason", "Hip-Hop", "Atlanta"),
+        (5, "J. Cole", "Hip-Hop", "Fayetteville"),
+        (6, "Freddie Gibbs & Alchemist", "Hip-Hop", "Gary / Beverly Hills"),
+        (7, "Westside Gunn", "Hip-Hop", "Buffalo"),
+        (8, "Clipse", "Hip-Hop", "Virginia Beach"),
+        (9, "Chance The Rapper", "Hip-Hop", "Chicago")
     ]
+
 
     conn.executemany(
         "INSERT OR IGNORE INTO Artist VALUES (?, ?, ?, ?)",
@@ -147,9 +154,24 @@ def seed_database(conn):
     # TODO: replace placeholder data with your team's chosen tracks (minimum 18)
 
     tracks = [
-        # (track_id, title, duration_seconds, artist_id),
-        (1, "TODO — Track Title", 200, 1),
-        # add at least 17 more rows ...
+        (1, "Power and Problems", 240, 1),
+        (2, "goosebumps", 244, 2),
+        (3, "STARGAZING", 271, 2),
+        (4, "CAN'T SAY Feat. Don Toliver", 198, 2),
+        (5, "No Idea", 154, 3),
+        (6, "Drugs N Hella Melodies Feat. Kali Uchis", 198, 3),
+        (7, "MAMA DON'T KNOW", 192, 4),
+        (8, "GIVENCHY BAG", 157, 4),
+        (9, "SHELL", 210, 4),
+        (10, "Huntin Wabbitz", 162, 5),
+        (11, "3001", 158, 5),
+        (12, "1995", 289, 6),
+        (13, "Mar-A-Lago", 149, 6),
+        (14, "God Is Perfect", 239, 6),
+        (15, "Why I Do Em Like That feat. Billie Esco", 241, 7),
+        (16, "MANDELA", 122, 7),
+        (17, "F.I.C.O. Feat. Stove God Cooks", 202, 8),
+        (18, "Ride Feat Do or Die", 179, 9)
     ]
 
     conn.executemany(
@@ -162,9 +184,10 @@ def seed_database(conn):
     # TODO: replace placeholder data with your team's chosen playlists (minimum 4)
 
     playlists = [
-        # (playlist_id, playlist_name, owner_name),
-        (1, "TODO — Playlist Name", "TODO — Owner"),
-        # add at least 3 more rows ...
+        (1, "Workout Mix", "Roy"),
+        (2, "Late Night Vibes", "Roy"),
+        (3, "Study Mode", "Roy"),
+        (4, "Weekend Drive", "Roy")
     ]
 
     conn.executemany(
@@ -181,9 +204,29 @@ def seed_database(conn):
     # TODO: replace placeholder data with your team's chosen assignments (minimum 20)
 
     playlist_tracks = [
-        # (playlist_id, track_id, position),
-        (1, 1, 1),
-        # add at least 19 more rows ...
+        (1, 2, 1),
+        (1, 3, 2),
+        (1, 7, 3),
+        (1, 10, 4),
+        (1, 12, 5),
+
+        (2, 1, 1),
+        (2, 5, 2),
+        (2, 6, 3),
+        (2, 14, 4),
+        (2, 15, 5),
+
+        (3, 8, 1),
+        (3, 9, 2),
+        (3, 11, 3),
+        (3, 13, 4),
+        (3, 18, 5),
+
+        (4, 4, 1),
+        (4, 12, 2),
+        (4, 14, 3),
+        (4, 16, 4),
+        (4, 17, 5)
     ]
 
     conn.executemany(
