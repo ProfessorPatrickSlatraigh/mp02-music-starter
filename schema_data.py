@@ -131,7 +131,14 @@ def seed_database(conn):
 
     artists = [
         # (artist_id, name, genre, origin_city),
-        (1, "TODO — Artist Name", "TODO — Genre", "TODO — City"),
+        #(1, "TODO — Artist Name", "TODO — Genre", "TODO — City"),
+        (1, "Rihanna", "Pop", "Barbados"),
+        (2, "Eminem", "Hip-Hop", "Detroit"),
+        (3, "Sade", "Soul", "London"),
+        (4, "Bob Marley", "Reggae", "Kingston"),
+        (5, "Beyoncé", "R&B", "Houston"),
+        (6, "Whitney Houston", "Pop", "Newark")
+        
         # add at least 5 more rows ...
     ]
 
@@ -148,8 +155,37 @@ def seed_database(conn):
 
     tracks = [
         # (track_id, title, duration_seconds, artist_id),
-        (1, "TODO — Track Title", 200, 1),
+        #(1, "TODO — Track Title", 200, 1),
         # add at least 17 more rows ...
+        # Rihanna
+        (1, "Umbrella", 262, 1),
+        (2, "Diamonds", 225, 1),
+        (3, "We Found Love", 215, 1),
+
+        #Eminem
+        (4, "Lose Yourself", 326, 2),
+        (5, "Stan", 404, 2),
+        (6, "Without Me", 290, 2),
+
+        #Sade
+        (7, "Smooth Operator", 298, 3),
+        (8, "No Ordinary Love", 420, 3),
+        (9, "By Your Side", 275, 3),
+
+        #Bob Marley
+        (10, "No Woman No Cry", 431, 4),
+        (11, "One Love", 178, 4),
+        (12, "Three Little Birds", 180, 4),
+
+        #Beyonce
+        (13, "Halo", 261, 5),
+        (14, "Crazy in Love", 235, 5),
+        (15, "Single Ladies", 194, 5),
+
+        #Whitney Houston
+        (16, "I Will Always Love You", 273, 6),
+        (17, "I Wanna Dance with Somebody", 293, 6),
+        (18, "Greatest Love of All", 295, 6)
     ]
 
     conn.executemany(
@@ -163,8 +199,12 @@ def seed_database(conn):
 
     playlists = [
         # (playlist_id, playlist_name, owner_name),
-        (1, "TODO — Playlist Name", "TODO — Owner"),
+        #(1, "TODO — Playlist Name", "TODO — Owner"),
         # add at least 3 more rows ...
+        (1, "Throwback Hits", "David"),
+        (2, "Soulzzz", "Sarah"),
+        (3, "Legends Only", "Alexis"),
+        (4, "Top Classics", "Jordan")
     ]
 
     conn.executemany(
@@ -184,6 +224,10 @@ def seed_database(conn):
         # (playlist_id, track_id, position),
         (1, 1, 1),
         # add at least 19 more rows ...
+        (1, 4, 2), (1, 7, 3), (1, 10, 4), (1, 13, 5), (2, 1, 6),
+        (2, 7, 1), (2, 8, 2), (2, 9, 3), (2, 17, 4), (2, 18, 5),
+        (3, 4, 1), (3, 10, 2), (3, 16, 3), (3, 11, 4), (3, 5, 5),
+        (4, 2, 1), (4, 6, 2), (4, 12, 3), (4, 14, 4), (4, 15, 5)
     ]
 
     conn.executemany(
