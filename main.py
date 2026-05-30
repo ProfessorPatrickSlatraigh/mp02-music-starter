@@ -3,7 +3,7 @@ main.py
 =======
 CIS 3120 · MP02 — SQL and Database
 Integrator module — application driver
-
+skeleton
 CONTRACT SUMMARY
 ----------------
 Implement the startup sequence, menu loop, and deletion sequence as specified.
